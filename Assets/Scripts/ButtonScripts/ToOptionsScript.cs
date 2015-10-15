@@ -12,12 +12,16 @@ public class ToOptionsScript : MonoBehaviour {
 
     void OnTouchUp()
     {
-        if (Application.loadedLevel != 0 && Application.loadedLevel != 2)
+        Debug.Log("Touch Up");
+        if (Application.loadedLevel != 0 && Application.loadedLevel != 2 && Application.loadedLevelName != "Tutorial" && Application.loadedLevelName != "Tutorial2")
         {
             tileCondition.Restart();
             tileCondition.DisableTileList();
         }
-        adHandler.DestroyBanner();
+        if (adHandler != null)
+        {
+            adHandler.DestroyBanner();
+        }
         Application.LoadLevel("Options");
     }
 

@@ -19,6 +19,8 @@ public class AdHandler : MonoBehaviour {
         bannerView.Show();
     }
 
+    void OnDestroy() { DestroyBanner(); }
+
     public void HideBanner()
     {
         bannerView.Hide();
@@ -33,4 +35,6 @@ public class AdHandler : MonoBehaviour {
     {
         bannerView.Destroy();
     }
+
+    
 }
