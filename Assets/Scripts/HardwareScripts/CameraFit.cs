@@ -147,7 +147,7 @@ public class CameraFit : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.LogException(e, this);
+            //Debug.LogException(e, this);
         }
     }
 

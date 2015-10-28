@@ -91,7 +91,7 @@ public class TileCondition : MonoBehaviour {
 
     public void Win()
     {
-        Debug.Log("Win!");
+        //Debug.Log("Win!");
         GameInformation.CompletedLevel(LevelManager.GetLevel());
         GameInformation.CheckHighScore(LevelManager.GetLevel(), scoreScript.GetFinalScore());
         SaveLoad.SaveGameInformation();

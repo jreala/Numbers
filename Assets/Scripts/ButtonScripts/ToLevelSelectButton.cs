@@ -3,7 +3,7 @@ using System.Collections;
 
 public class ToLevelSelectButton : MonoBehaviour {
 
-    public AdHandler adHandler;
+    //public AdHandler adHandler;
     public TileCondition tileCondition;
 
     void OnTouchDown()
@@ -17,7 +17,7 @@ public class ToLevelSelectButton : MonoBehaviour {
             tileCondition.Restart();
             tileCondition.DisableTileList();
         }
-        adHandler.DestroyBanner();
+        //adHandler.DestroyBanner();
         Application.LoadLevel("LevelSelect");
     }
 

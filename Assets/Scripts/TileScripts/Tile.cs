@@ -202,7 +202,7 @@ public class Tile : MonoBehaviour
             {
                 sr.sprite = star;
             }
-            Debug.Log(Value.text);
+            //Debug.Log(Value.text);
             Value.GetComponent<MeshRenderer>().enabled = false;
         }
         else if (Int32.Parse(Value.text) <= 0)
