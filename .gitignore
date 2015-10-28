@@ -5,6 +5,7 @@
 *.pidb
 *.unityproj
 *.dwlt
+*.keystore
 .DS_Store
 
 Assets/GoogleMobileAds
