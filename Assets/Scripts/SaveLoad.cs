@@ -10,8 +10,8 @@ public static class SaveLoad {
     public static void SaveGameInformation()
     {
         BinaryFormatter binaryFormatter = new BinaryFormatter();
-        FileStream file = File.Open(path + "/progress.gd", FileMode.OpenOrCreate);
-        //Debug.Log(path);
+        FileStream file = File.Open(path + "/save.ecs", FileMode.OpenOrCreate);
+
         ProgressTracker data = new ProgressTracker();
         data.levelCompleted = GameInformation.CompletedLevels;
         data.highScores = GameInformation.HighScoresOnLevels;
@@ -22,10 +22,10 @@ public static class SaveLoad {
 
     public static void LoadGameInformation()
     {
-        if (File.Exists(path + "/progress.gd"))
+        if (File.Exists(path + "/save.ecs"))
         {
             BinaryFormatter bf = new BinaryFormatter();
-            FileStream file = File.Open(path + "/progress.gd", FileMode.Open);
+            FileStream file = File.Open(path + "/save.ecs", FileMode.Open);
             ProgressTracker data = (ProgressTracker)bf.Deserialize(file);
             file.Close();
 

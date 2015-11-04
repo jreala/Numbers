@@ -8,7 +8,7 @@ public class BackToOptions : MonoBehaviour {
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            Application.LoadLevel(2);
+            Application.LoadLevel("Options");
         }
     }
 }

@@ -51,12 +51,10 @@ public class GameInformation : MonoBehaviour {
     {
         if(score > HighScoresOnLevels[level - 1])
         {
-            HighScoresOnLevels[level - 1] = score;
-            //Debug.Log("Score swapped! New High Score : " + score);
+            HighScoresOnLevels[level - 1] = score;  
         }
         else
         { 
-            //Debug.Log("Old Score Kept : " + HighScoresOnLevels[level - 1]); 
         }
     }
 }

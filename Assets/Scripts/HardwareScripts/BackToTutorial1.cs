@@ -8,7 +8,7 @@ public class BackToTutorial1 : MonoBehaviour {
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            Application.LoadLevel(4);
+            Application.LoadLevel("Tutorial");
         }
     }
 }

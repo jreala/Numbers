@@ -8,7 +8,7 @@ public class BackToLevelSelect : MonoBehaviour {
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            Application.LoadLevel(1);
+            Application.LoadLevel("LevelSelect");
         }
 	}
 }

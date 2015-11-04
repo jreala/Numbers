@@ -12,7 +12,7 @@ public class ToLevelSelectButton : MonoBehaviour {
 
     void OnTouchUp()
     {
-        if (Application.loadedLevel != 0)
+        if (Application.loadedLevel != 1)
         {
             tileCondition.Restart();
             tileCondition.DisableTileList();

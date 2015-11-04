@@ -21,17 +21,29 @@ public class MenuSystem : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
     {
+        GameStateSwitch();   
+	}
+
+    private void GameStateSwitch()
+    {
         if (currentGameState != GameState.Win)
         {
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-                currentGameState = GameState.Paused;
+                if (currentGameState == GameState.Paused)
+                {
+                    currentGameState = GameState.Playing;
+                }
+                else
+                {
+                    currentGameState = GameState.Paused;
+                }
             }
         }
 
-        switch(currentGameState)
+        switch (currentGameState)
         {
-            case GameState.Paused: 
+            case GameState.Paused:
                 Time.timeScale = 0;
                 PauseGame();
                 break;
@@ -44,7 +56,7 @@ public class MenuSystem : MonoBehaviour {
                 WinGame();
                 break;
         }
-	}
+    }
 
     private void WinGame()
     {

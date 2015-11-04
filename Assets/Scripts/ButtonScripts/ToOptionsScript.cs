@@ -12,8 +12,7 @@ public class ToOptionsScript : MonoBehaviour {
 
     void OnTouchUp()
     {
-        //Debug.Log("Touch Up");
-        if (Application.loadedLevel != 0 && Application.loadedLevel != 2 && Application.loadedLevelName != "Tutorial" && Application.loadedLevelName != "Tutorial2")
+        if (Application.loadedLevelName != "Menu" && Application.loadedLevelName != "Options" && Application.loadedLevelName != "Tutorial" && Application.loadedLevelName != "Tutorial2")
         {
             tileCondition.Restart();
             tileCondition.DisableTileList();

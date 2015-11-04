@@ -8,7 +8,7 @@ public class BackToMenu : MonoBehaviour {
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            Application.LoadLevel(0);
+            Application.LoadLevel("Menu");
         }
 	}
 }
