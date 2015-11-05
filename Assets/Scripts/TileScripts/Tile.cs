@@ -84,92 +84,6 @@ public class Tile : MonoBehaviour
         yield return null;
     }
 
-    public IEnumerator RotateLeftRight()
-    {
-        // Every time activated, set to original position. 
-        transform.rotation = Quaternion.identity;
-        Value.transform.position = new Vector3(transform.position.x, transform.position.y, -.001f);
-
-        Quaternion fromAngle = transform.rotation;
-        Quaternion toAngle = Quaternion.Euler(transform.eulerAngles + new Vector3(0, 50, 0));
-        Quaternion backAngle = Quaternion.Euler(transform.eulerAngles - new Vector3(0, 50, 0));
-        int passes = 0;
-        while (passes < 2)
-        {
-            for (float t = 0; t < 1; t += Time.deltaTime / 0.25f)
-            {
-                transform.rotation = Quaternion.Lerp(fromAngle, toAngle, t);
-                yield return new WaitForEndOfFrame();
-            }
-            for (float t = 0; t < 1; t += Time.deltaTime / 0.5f)
-            {
-                transform.rotation = Quaternion.Lerp(toAngle, backAngle, t);
-                yield return new WaitForEndOfFrame();
-            }
-            for (float t = 0; t < 1; t += Time.deltaTime / 0.25f)
-            {
-                transform.rotation = Quaternion.Lerp(backAngle, fromAngle, t);
-                yield return new WaitForEndOfFrame();
-            }
-            passes += 1;
-        }
-        
-        transform.rotation = Quaternion.identity;
-        if (Int32.Parse(Value.text) < 10 && Int32.Parse(Value.text) > 0)
-        {
-            Value.GetComponent<MeshRenderer>().enabled = true;
-        }
-        else
-        {
-            Value.GetComponent<MeshRenderer>().enabled = false;
-        }
-        Value.transform.position = new Vector3(transform.position.x, transform.position.y, -.001f);
-        yield return null;
-    }
-
-    public IEnumerator RotateUpDown()
-    {
-        // Every time activated, set to original position. 
-        transform.rotation = Quaternion.identity;
-        Value.transform.position = new Vector3(transform.position.x, transform.position.y, -.001f);
-
-        Quaternion fromAngle = transform.rotation;
-        Quaternion toAngle = Quaternion.Euler(transform.eulerAngles + new Vector3(50, 0, 0));
-        Quaternion backAngle = Quaternion.Euler(transform.eulerAngles - new Vector3(50, 0, 0));
-        int passes = 0;
-        while (passes < 2)
-        {
-            for (float t = 0; t < 1; t += Time.deltaTime / 0.25f)
-            {
-                transform.rotation = Quaternion.Lerp(fromAngle, toAngle, t);
-                yield return new WaitForEndOfFrame();
-            }
-            for (float t = 0; t < 1; t += Time.deltaTime / 0.5f)
-            {
-                transform.rotation = Quaternion.Lerp(toAngle, backAngle, t);
-                yield return new WaitForEndOfFrame();
-            }
-            for (float t = 0; t < 1; t += Time.deltaTime / 0.25f)
-            {
-                transform.rotation = Quaternion.Lerp(backAngle, fromAngle, t);
-                yield return new WaitForEndOfFrame();
-            }
-            passes += 1;
-        }
-
-        transform.rotation = Quaternion.identity;
-        if (Int32.Parse(Value.text) < 10 && Int32.Parse(Value.text) > 0)
-        {
-            Value.GetComponent<MeshRenderer>().enabled = true;
-        }
-        else
-        {
-            Value.GetComponent<MeshRenderer>().enabled = false;
-        }
-        Value.transform.position = new Vector3(transform.position.x, transform.position.y, -.001f);
-        yield return null;
-    }
-
     public IEnumerator ChangeTileColors()
     {
         while(CanTouch)
@@ -222,10 +136,4 @@ public class Tile : MonoBehaviour
             }
         }
     }
-
-	// Update is called once per frame
-	void Update () 
-    {
-        
-	}
 }

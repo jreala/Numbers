@@ -13,8 +13,7 @@ Assets/Plugins
 Library
 Library/meta*
 Library/shader*
-Star.apk
-NumbersGame.apk
+*.apk
 *.meta
 obj
 ProjectSettings

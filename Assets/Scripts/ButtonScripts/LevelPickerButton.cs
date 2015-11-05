@@ -14,7 +14,6 @@ public class LevelPickerButton : MonoBehaviour {
         level = Int32.Parse(textMesh.text);
         sr = this.gameObject.GetComponent<SpriteRenderer>();
 
-        // Moved here from update
         if (GameInformation.CompletedLevels[level - 1] == 1)
         {
             sr.color = Color.yellow;
@@ -27,11 +26,6 @@ public class LevelPickerButton : MonoBehaviour {
             sr.color = Color.gray;
         }
 
-    }
-
-    void Update()
-    {
-        
     }
 
     void OnTouchDown()

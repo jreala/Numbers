@@ -13,6 +13,8 @@ public class Button : MonoBehaviour
     Tile touchedBM;
     Tile touchedBR;
 
+    Tile touchedTile;
+
     TileCondition tileCondition;
     ScoreScript scoreScript;
 
@@ -28,7 +30,7 @@ public class Button : MonoBehaviour
 
     void OnTouchUp()
     {
-        Tile touchedTile = gameObject.GetComponent<Tile>();
+        touchedTile = gameObject.GetComponent<Tile>();
         if(!touchedTile.CanTouch)
         {
             return;
@@ -51,6 +53,36 @@ public class Button : MonoBehaviour
          *  If there's a non-zero tile next to the touched tile, increment it by one 
          */
 
+        TopMid();
+        Left();
+        Right();
+        BotMid();
+
+        /*
+         *  If there's a non-zero tile in a diagonal, take the two adjacent tiles to the diagonal and add them.
+         *  Note : The minus one is because we want to take the sum of numbers pre-incrementing.
+        */
+
+        TopLeft();
+        TopRight();
+        BotLeft();
+        BotRight();
+
+        //touchedTile.ColorTile(Color.blue);
+
+        CheckForWin();
+    }
+
+    void OnTouchStay()
+    {
+    }
+
+    void OnTouchExit()
+    {
+    }
+
+    private void TopMid()
+    {
         if (touchedTile.TopMid != null)
         {
             touchedTM = touchedTile.TopMid.GetComponent<Tile>();
@@ -74,7 +106,53 @@ public class Button : MonoBehaviour
                 touchedTM.StartCoroutine(touchedTM.ChangeTileColors());
             }
         }
+    }
 
+    private void TopLeft()
+    {
+        if (touchedTile.TopLeft != null)
+        {
+            touchedTL = touchedTile.TopLeft.GetComponent<Tile>();
+
+            if (touchedTM.Value.text != "0" && touchedL.Value.text != "0")
+            {
+                scoreScript.IncreaseScore(50);
+                StartCoroutine(touchedTL.RotateDiagonal());
+                touchedTL.Value.text = (Int32.Parse(touchedTL.Value.text) + Int32.Parse(touchedTM.Value.text) + Int32.Parse(touchedL.Value.text) - 2).ToString();
+                touchedTL.CanTouch = false;
+                touchedTL.touchy = touchedTL.CanTouch;
+
+                if (Int32.Parse(touchedTL.Value.text) >= 10)
+                {
+                    touchedTL.UpdateTileImage();
+                }
+            }
+        }
+    }
+
+    private void TopRight()
+    {
+        if (touchedTile.TopRight != null)
+        {
+            touchedTR = touchedTile.TopRight.GetComponent<Tile>();
+            if (touchedTM.Value.text != "0" && touchedR.Value.text != "0")
+            {
+                scoreScript.IncreaseScore(50);
+                StartCoroutine(touchedTR.RotateDiagonal());
+                touchedTR.Value.text = (Int32.Parse(touchedTR.Value.text) + Int32.Parse(touchedTM.Value.text) + Int32.Parse(touchedR.Value.text) - 2).ToString();
+                touchedTR.CanTouch = false;
+                touchedTR.touchy = touchedTR.CanTouch;
+
+                if (Int32.Parse(touchedTR.Value.text) >= 10)
+                {
+                    touchedTR.UpdateTileImage();
+                }
+            }
+        }    
+    }
+
+    private void Left()
+    {
         if (touchedTile.Left != null)
         {
             touchedL = touchedTile.Left.GetComponent<Tile>();
@@ -85,7 +163,7 @@ public class Button : MonoBehaviour
                 touchedL.Value.text = (Int32.Parse(touchedL.Value.text) + 1).ToString();
                 touchedL.CanTouch = false;
                 touchedL.touchy = touchedL.CanTouch;
-                
+
                 if (Int32.Parse(touchedL.Value.text) >= 10)
                 {
                     touchedL.UpdateTileImage();
@@ -98,7 +176,10 @@ public class Button : MonoBehaviour
                 touchedL.StartCoroutine(touchedL.ChangeTileColors());
             }
         }
+    }
 
+    private void Right()
+    {
         if (touchedTile.Right != null)
         {
             touchedR = touchedTile.Right.GetComponent<Tile>();
@@ -122,7 +203,10 @@ public class Button : MonoBehaviour
                 touchedR.StartCoroutine(touchedR.ChangeTileColors());
             }
         }
+    }
 
+    private void BotMid()
+    {
         if (touchedTile.BottomMid != null)
         {
             touchedBM = touchedTile.BottomMid.GetComponent<Tile>();
@@ -146,49 +230,10 @@ public class Button : MonoBehaviour
                 touchedBM.StartCoroutine(touchedBM.ChangeTileColors());
             }
         }
+    }
 
-        /*
-         *  If there's a non-zero tile in a diagonal, take the two adjacent tiles to the diagonal and add them.
-         *  Note : The minus one is because we want to take the sum of numbers pre-incrementing.
-        */
-
-        if (touchedTile.TopLeft != null)
-        {
-            touchedTL = touchedTile.TopLeft.GetComponent<Tile>();
-
-            if (touchedTM.Value.text != "0" && touchedL.Value.text != "0")
-            {
-                scoreScript.IncreaseScore(50);
-                StartCoroutine(touchedTL.RotateDiagonal());
-                touchedTL.Value.text = (Int32.Parse(touchedTL.Value.text) + Int32.Parse(touchedTM.Value.text) + Int32.Parse(touchedL.Value.text) - 2).ToString();
-                touchedTL.CanTouch = false;
-                touchedTL.touchy = touchedTL.CanTouch;
-
-                if (Int32.Parse(touchedTL.Value.text) >= 10)
-                {
-                    touchedTL.UpdateTileImage();
-                }
-            }
-        }
-
-        if (touchedTile.TopRight != null)
-        {
-            touchedTR = touchedTile.TopRight.GetComponent<Tile>();
-            if (touchedTM.Value.text != "0" && touchedR.Value.text != "0")
-            {
-                scoreScript.IncreaseScore(50);
-                StartCoroutine(touchedTR.RotateDiagonal());
-                touchedTR.Value.text = (Int32.Parse(touchedTR.Value.text) + Int32.Parse(touchedTM.Value.text) + Int32.Parse(touchedR.Value.text) - 2).ToString();
-                touchedTR.CanTouch = false;
-                touchedTR.touchy = touchedTR.CanTouch;
-
-                if (Int32.Parse(touchedTR.Value.text) >= 10)
-                {
-                    touchedTR.UpdateTileImage();
-                }
-            }
-        }
-
+    private void BotLeft()
+    {
         if (touchedTile.BottomLeft != null)
         {
             touchedBL = touchedTile.BottomLeft.GetComponent<Tile>();
@@ -206,7 +251,10 @@ public class Button : MonoBehaviour
                 }
             }
         }
+    }
 
+    private void BotRight()
+    {
         if (touchedTile.BottomRight != null)
         {
             touchedBR = touchedTile.BottomRight.GetComponent<Tile>();
@@ -217,18 +265,17 @@ public class Button : MonoBehaviour
                 touchedBR.Value.text = (Int32.Parse(touchedBR.Value.text) + Int32.Parse(touchedBM.Value.text) + Int32.Parse(touchedR.Value.text) - 2).ToString();
                 touchedBR.CanTouch = false;
                 touchedBR.touchy = touchedBR.CanTouch;
-                
+
                 if (Int32.Parse(touchedBR.Value.text) >= 10)
                 {
                     touchedBR.UpdateTileImage();
                 }
             }
         }
+    }
 
-        touchedTile.ColorTile(Color.blue);
-
-        #region Check for Win
-
+    private void CheckForWin()
+    {
         if (touchedTile != null && touchedTile.IsWinCondition)
         {
             if (Int32.Parse(touchedTile.Value.text) >= 10 && !touchedTile.WinMarked)
@@ -313,15 +360,5 @@ public class Button : MonoBehaviour
                 tileCondition.CheckForWin();
             }
         }
-
-        #endregion 
-    }
-
-    void OnTouchStay()
-    {
-    }
-
-    void OnTouchExit()
-    {
     }
 }

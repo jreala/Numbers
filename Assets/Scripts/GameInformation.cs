@@ -53,8 +53,5 @@ public class GameInformation : MonoBehaviour {
         {
             HighScoresOnLevels[level - 1] = score;  
         }
-        else
-        { 
-        }
     }
 }

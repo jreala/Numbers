@@ -67,7 +67,6 @@ public class MenuSystem : MonoBehaviour {
     {
         EnableObjects();
         pauseMenu.SetActive(false);
-        
     }
 
     private void PauseGame()

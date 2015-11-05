@@ -3,7 +3,6 @@ using System.Collections;
 
 public class ToOptionsScript : MonoBehaviour {
 
-    public AdHandler adHandler;
     public TileCondition tileCondition;
 
     void OnTouchDown()
@@ -16,10 +15,6 @@ public class ToOptionsScript : MonoBehaviour {
         {
             tileCondition.Restart();
             tileCondition.DisableTileList();
-        }
-        if (adHandler != null)
-        {
-            adHandler.DestroyBanner();
         }
         Application.LoadLevel("Options");
     }
