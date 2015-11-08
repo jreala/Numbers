@@ -21,7 +21,6 @@ public class TileCondition : MonoBehaviour {
 
     public void Restart()
     {
-        //tileList = GameObject.Find("5x5 Grid").GetComponent<TileList>();
         tileList.Restart();
         SetFirstTouch(true);
         tiles = tileList.GetTileList();
@@ -69,11 +68,7 @@ public class TileCondition : MonoBehaviour {
             Win();
         }
     }
-
-    public void Lose()
-    {
-    }
-
+    
     /*
      *  Private Classes 
      */
@@ -91,13 +86,10 @@ public class TileCondition : MonoBehaviour {
 
     public void Win()
     {
-        //Debug.Log("Win!");
         GameInformation.CompletedLevel(LevelManager.GetLevel());
         GameInformation.CheckHighScore(LevelManager.GetLevel(), scoreScript.GetFinalScore());
         SaveLoad.SaveGameInformation();
         winBoard.SetActive(true);
-        //winBoard.GetComponentInChildren<TextMesh>().text = "Boo!";
-        //Application.LoadLevel("LevelSelect");
     }
 
 }

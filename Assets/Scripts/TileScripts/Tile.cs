@@ -41,6 +41,11 @@ public class Tile : MonoBehaviour
         sr.color = color;
     }
 
+    public void ReEnableColorCoroutine()
+    {
+        StartCoroutine(ChangeTileColors());
+    }
+
     public IEnumerator RotateDiagonal()
     {
         // Every time activated, set to original position. 

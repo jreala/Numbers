@@ -3,7 +3,6 @@ using System.Collections;
 
 public class RestartLevelButton : MonoBehaviour {
 
-    //public AdHandler adHandler;
     public TileCondition tileCondition;
 
     void OnTouchDown()
@@ -12,8 +11,6 @@ public class RestartLevelButton : MonoBehaviour {
 
     void OnTouchUp()
     {
-        //adHandler.DestroyBanner();
-
         tileCondition.Restart();
         tileCondition.DisableTileList();
 

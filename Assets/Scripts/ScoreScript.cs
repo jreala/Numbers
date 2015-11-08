@@ -23,6 +23,12 @@ public class ScoreScript : MonoBehaviour {
         scoreText.text = Convert.ToString(points);
     }
 
+    public void DecreaseScore(int amount)
+    {
+        points -= amount;
+        scoreText.text = Convert.ToString(points);
+    }
+
     public string GetScore()
     {
         return Convert.ToString(points); 

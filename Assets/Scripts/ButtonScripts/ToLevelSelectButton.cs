@@ -3,7 +3,6 @@ using System.Collections;
 
 public class ToLevelSelectButton : MonoBehaviour {
 
-    //public AdHandler adHandler;
     public TileCondition tileCondition;
 
     void OnTouchDown()
@@ -12,22 +11,19 @@ public class ToLevelSelectButton : MonoBehaviour {
 
     void OnTouchUp()
     {
-        if (Application.loadedLevel != 1)
+        if (tileCondition != null)
         {
             tileCondition.Restart();
             tileCondition.DisableTileList();
         }
-        //adHandler.DestroyBanner();
         Application.LoadLevel("LevelSelect");
     }
 
     void OnTouchStay()
     {
-        //Debug.Log(gameObject.name + " : Stay");
     }
 
     void OnTouchExit()
     {
-        //Debug.Log(gameObject.name + " : Exit");
     }
 }

@@ -1,9 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using System.Collections.Generic;
 
 public class Button : MonoBehaviour 
 {
+    UndoMove undo;
+    List<Tile> undoTiles;
+    List<Tile> openedTiles;
+    int undoScore = 0;
+
     Tile touchedTL;
     Tile touchedTM;
     Tile touchedTR;
@@ -20,6 +26,7 @@ public class Button : MonoBehaviour
 
     void Awake()
     {
+        undo = gameObject.GetComponentInParent<UndoMove>();
         tileCondition = gameObject.GetComponentInParent<TileCondition>();
         scoreScript = gameObject.GetComponentInParent<ScoreScript>();
     }
@@ -42,12 +49,19 @@ public class Button : MonoBehaviour
             tileCondition.DisableTileList();
         }
 
+        undoTiles = new List<Tile>();
+        openedTiles = new List<Tile>();
+        undoScore = 0;
+
         touchedTile.CanTouch = false;
         touchedTile.touchy = touchedTile.CanTouch;
         touchedTile.Value.text = (Int32.Parse(touchedTile.Value.text) + 1).ToString();
         scoreScript.IncreaseScore(10);
 
         StartCoroutine(touchedTile.RotateDiagonal());
+
+        undoTiles.Add(touchedTile);
+        undoScore += 10;
 
         /*
          *  If there's a non-zero tile next to the touched tile, increment it by one 
@@ -68,8 +82,8 @@ public class Button : MonoBehaviour
         BotLeft();
         BotRight();
 
-        //touchedTile.ColorTile(Color.blue);
-
+        undo.AddUndo(undoTiles, undoScore, openedTiles);
+        
         CheckForWin();
     }
 
@@ -88,6 +102,8 @@ public class Button : MonoBehaviour
             touchedTM = touchedTile.TopMid.GetComponent<Tile>();
             if (touchedTM.Value.text != "0")
             {
+                undoTiles.Add(touchedTM);
+                undoScore += 10;
                 scoreScript.IncreaseScore(10);
                 StartCoroutine(touchedTM.RotateDiagonal());
                 touchedTM.Value.text = (Int32.Parse(touchedTM.Value.text) + 1).ToString();
@@ -101,6 +117,10 @@ public class Button : MonoBehaviour
             }
             else
             {
+                if (!touchedTM.CanTouch)
+                {
+                    openedTiles.Add(touchedTM);
+                }
                 touchedTM.CanTouch = true;
                 touchedTM.touchy = touchedTM.CanTouch;
                 touchedTM.StartCoroutine(touchedTM.ChangeTileColors());
@@ -116,6 +136,8 @@ public class Button : MonoBehaviour
 
             if (touchedTM.Value.text != "0" && touchedL.Value.text != "0")
             {
+                undoTiles.Add(touchedTL);
+                undoScore += 50;
                 scoreScript.IncreaseScore(50);
                 StartCoroutine(touchedTL.RotateDiagonal());
                 touchedTL.Value.text = (Int32.Parse(touchedTL.Value.text) + Int32.Parse(touchedTM.Value.text) + Int32.Parse(touchedL.Value.text) - 2).ToString();
@@ -137,6 +159,8 @@ public class Button : MonoBehaviour
             touchedTR = touchedTile.TopRight.GetComponent<Tile>();
             if (touchedTM.Value.text != "0" && touchedR.Value.text != "0")
             {
+                undoTiles.Add(touchedTR);
+                undoScore += 50;
                 scoreScript.IncreaseScore(50);
                 StartCoroutine(touchedTR.RotateDiagonal());
                 touchedTR.Value.text = (Int32.Parse(touchedTR.Value.text) + Int32.Parse(touchedTM.Value.text) + Int32.Parse(touchedR.Value.text) - 2).ToString();
@@ -158,7 +182,9 @@ public class Button : MonoBehaviour
             touchedL = touchedTile.Left.GetComponent<Tile>();
             if (touchedL.Value.text != "0")
             {
+                undoTiles.Add(touchedL);
                 scoreScript.IncreaseScore(10);
+                undoScore += 10;
                 StartCoroutine(touchedL.RotateDiagonal());
                 touchedL.Value.text = (Int32.Parse(touchedL.Value.text) + 1).ToString();
                 touchedL.CanTouch = false;
@@ -171,6 +197,10 @@ public class Button : MonoBehaviour
             }
             else
             {
+                if (!touchedL.CanTouch)
+                {
+                    openedTiles.Add(touchedL);
+                }
                 touchedL.CanTouch = true;
                 touchedL.touchy = touchedL.CanTouch;
                 touchedL.StartCoroutine(touchedL.ChangeTileColors());
@@ -185,7 +215,9 @@ public class Button : MonoBehaviour
             touchedR = touchedTile.Right.GetComponent<Tile>();
             if (touchedR.Value.text != "0")
             {
+                undoTiles.Add(touchedR);
                 scoreScript.IncreaseScore(10);
+                undoScore += 10;
                 StartCoroutine(touchedR.RotateDiagonal());
                 touchedR.Value.text = (Int32.Parse(touchedR.Value.text) + 1).ToString();
                 touchedR.CanTouch = false;
@@ -198,6 +230,10 @@ public class Button : MonoBehaviour
             }
             else
             {
+                if (!touchedR.CanTouch)
+                {
+                    openedTiles.Add(touchedR);
+                }
                 touchedR.CanTouch = true;
                 touchedR.touchy = touchedR.CanTouch;
                 touchedR.StartCoroutine(touchedR.ChangeTileColors());
@@ -212,6 +248,8 @@ public class Button : MonoBehaviour
             touchedBM = touchedTile.BottomMid.GetComponent<Tile>();
             if (touchedBM.Value.text != "0")
             {
+                undoTiles.Add(touchedBM);
+                undoScore += 10;
                 scoreScript.IncreaseScore(10);
                 StartCoroutine(touchedBM.RotateDiagonal());
                 touchedBM.Value.text = (Int32.Parse(touchedBM.Value.text) + 1).ToString();
@@ -225,6 +263,10 @@ public class Button : MonoBehaviour
             }
             else
             {
+                if (!touchedBM.CanTouch)
+                {
+                    openedTiles.Add(touchedBM);
+                }
                 touchedBM.CanTouch = true;
                 touchedBM.touchy = touchedBM.CanTouch;
                 touchedBM.StartCoroutine(touchedBM.ChangeTileColors());
@@ -239,6 +281,8 @@ public class Button : MonoBehaviour
             touchedBL = touchedTile.BottomLeft.GetComponent<Tile>();
             if (touchedBM.Value.text != "0" && touchedL.Value.text != "0")
             {
+                undoTiles.Add(touchedBL);
+                undoScore += 50;
                 scoreScript.IncreaseScore(50);
                 StartCoroutine(touchedBL.RotateDiagonal());
                 touchedBL.Value.text = (Int32.Parse(touchedBL.Value.text) + Int32.Parse(touchedBM.Value.text) + Int32.Parse(touchedL.Value.text) - 2).ToString();
@@ -260,7 +304,9 @@ public class Button : MonoBehaviour
             touchedBR = touchedTile.BottomRight.GetComponent<Tile>();
             if (touchedBM.Value.text != "0" && touchedR.Value.text != "0")
             {
+                undoTiles.Add(touchedBR);
                 scoreScript.IncreaseScore(50);
+                undoScore += 50;
                 StartCoroutine(touchedBR.RotateDiagonal());
                 touchedBR.Value.text = (Int32.Parse(touchedBR.Value.text) + Int32.Parse(touchedBM.Value.text) + Int32.Parse(touchedR.Value.text) - 2).ToString();
                 touchedBR.CanTouch = false;

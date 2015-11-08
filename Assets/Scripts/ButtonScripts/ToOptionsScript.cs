@@ -11,7 +11,7 @@ public class ToOptionsScript : MonoBehaviour {
 
     void OnTouchUp()
     {
-        if (Application.loadedLevelName != "Menu" && Application.loadedLevelName != "Options" && Application.loadedLevelName != "Tutorial" && Application.loadedLevelName != "Tutorial2")
+        if (tileCondition != null)
         {
             tileCondition.Restart();
             tileCondition.DisableTileList();
@@ -21,11 +21,9 @@ public class ToOptionsScript : MonoBehaviour {
 
     void OnTouchStay()
     {
-        //Debug.Log(gameObject.name + " : Stay");
     }
 
     void OnTouchExit()
     {
-        //Debug.Log(gameObject.name + " : Exit");
     }
 }
