@@ -10,15 +10,6 @@ public class Button : MonoBehaviour
     List<Tile> openedTiles;
     int undoScore = 0;
 
-    Tile touchedTL;
-    Tile touchedTM;
-    Tile touchedTR;
-    Tile touchedL;
-    Tile touchedR;
-    Tile touchedBL;
-    Tile touchedBM;
-    Tile touchedBR;
-
     Tile touchedTile;
 
     TileCondition tileCondition;
@@ -90,7 +81,6 @@ public class Button : MonoBehaviour
 
         /*
          *  If there's a non-zero tile in a diagonal, take the two adjacent tiles to the diagonal and add them.
-         *  Note : The minus one is because we want to take the sum of numbers pre-incrementing.
         */
 
         // Top Left
@@ -116,6 +106,7 @@ public class Button : MonoBehaviour
 
         undo.AddUndo(undoTiles, undoScore, openedTiles);
 
+        // Cycle through the modified tiles and check for win
         for (int i = 0; i < undoTiles.Count; i++)
         {
             CheckForWin(undoTiles[i].tile);
