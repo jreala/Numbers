@@ -7,7 +7,7 @@ public class UndoMove : MonoBehaviour {
 
     public ScoreScript scoreScript;
 
-    private Dictionary<int, List<Tile>> undoDict;
+    private Dictionary<int, List<TileScore>> undoDict;
     private Dictionary<int, int> undoScoreDict;
     private Dictionary<int, List<Tile>> tilesOpened;
 
@@ -15,13 +15,13 @@ public class UndoMove : MonoBehaviour {
 
     void Awake()
     {
-        undoDict = new Dictionary<int, List<Tile>>();
+        undoDict = new Dictionary<int, List<TileScore>>();
         undoScoreDict = new Dictionary<int, int>();
         tilesOpened = new Dictionary<int, List<Tile>>();
         DictPosition = 0;
     }
 
-    public void AddUndo(List<Tile> tiles, int score, List<Tile> openedTiles)
+    public void AddUndo(List<TileScore> tiles, int score, List<Tile> openedTiles)
     {
         undoDict[DictPosition] = tiles;
         undoScoreDict[DictPosition] = score;
@@ -40,19 +40,19 @@ public class UndoMove : MonoBehaviour {
     {
         if (DictPosition > 1)
         {
-            List<Tile> tiles = new List<Tile>();
+            List<TileScore> tiles = new List<TileScore>();
             if (undoDict.TryGetValue(DictPosition - 1, out tiles))
             {
-                foreach (Tile tile in tiles)
+                foreach (TileScore tile in tiles)
                 {
                     if (tiles[0] == tile)
                     {
                         EnableTileTouch(tile);
-                        tile.ReEnableColorCoroutine();
+                        tile.tile.ReEnableColorCoroutine();   
                     }
-                    
                     LowerTileScore(tile);
                     HideTileScore(tile);
+                    UndoTileWin(tile.tile);
                 }
             }
             UndoScore();
@@ -61,13 +61,13 @@ public class UndoMove : MonoBehaviour {
         }
     }
 
-    private void LowerTileScore(Tile tile)
+    private void LowerTileScore(TileScore tile)
     {
-        // TODO : Adjust for diagonal as it is not always 1
-        if (Int32.Parse(tile.Value.text) > 0)
+        if (Int32.Parse(tile.tile.Value.text) > 0)
         {
-            tile.Value.text = (Int32.Parse(tile.Value.text) - 1).ToString();
+            tile.tile.Value.text = (Int32.Parse(tile.tile.Value.text) - tile.score).ToString();
         }
+        tile.tile.UpdateTileImage();
     }
 
     public void UndoScore()
@@ -79,18 +79,31 @@ public class UndoMove : MonoBehaviour {
         }
     }
 
-    private void HideTileScore(Tile tile)
+    private void HideTileScore(TileScore tile)
     {
-        if(Int32.Parse(tile.Value.text) <= 0)
+        if (Int32.Parse(tile.tile.Value.text) <= 0 || Int32.Parse(tile.tile.Value.text) >= 10)
         {
-            tile.Value.GetComponent<MeshRenderer>().enabled = false;
+            tile.tile.Value.GetComponent<MeshRenderer>().enabled = false;
+        }
+        else
+        {
+            tile.tile.Value.GetComponent<MeshRenderer>().enabled = true;
         }
     }
 
-    private void EnableTileTouch(Tile tile)
+    private void EnableTileTouch(TileScore tile)
     {
-        tile.CanTouch = true;
-        tile.touchy = true;
+        tile.tile.CanTouch = true;
+        tile.tile.touchy = true;
+    }
+
+    private void UndoTileWin(Tile tile)
+    {
+        if(tile.IsWinCondition)
+        {
+            TileCondition.DecreaseCompletedTiles();
+        }
+        tile.WinMarked = false;
     }
 
     private void ReformatBoard()

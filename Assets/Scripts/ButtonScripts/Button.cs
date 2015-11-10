@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class Button : MonoBehaviour 
 {
     UndoMove undo;
-    List<Tile> undoTiles;
+    List<TileScore> undoTiles;
     List<Tile> openedTiles;
     int undoScore = 0;
 
@@ -49,7 +49,7 @@ public class Button : MonoBehaviour
             tileCondition.DisableTileList();
         }
 
-        undoTiles = new List<Tile>();
+        undoTiles = new List<TileScore>();
         openedTiles = new List<Tile>();
         undoScore = 0;
 
@@ -60,31 +60,66 @@ public class Button : MonoBehaviour
 
         StartCoroutine(touchedTile.RotateDiagonal());
 
-        undoTiles.Add(touchedTile);
+        undoTiles.Add(new TileScore(touchedTile, 1));
         undoScore += 10;
 
         /*
          *  If there's a non-zero tile next to the touched tile, increment it by one 
          */
 
-        TopMid();
-        Left();
-        Right();
-        BotMid();
+        // Top Mid
+        if(touchedTile.TopMid != null)
+        {
+            Adjacent(touchedTile.TopMid.GetComponent<Tile>());
+        }
+        // Left
+        if (touchedTile.Left != null)
+        {
+            Adjacent(touchedTile.Left.GetComponent<Tile>());
+        }
+        // Right
+        if (touchedTile.Right != null)
+        {
+            Adjacent(touchedTile.Right.GetComponent<Tile>());
+        }
+        // Bottom Mid
+        if (touchedTile.BottomMid != null)
+        {
+            Adjacent(touchedTile.BottomMid.GetComponent<Tile>());
+        }
 
         /*
          *  If there's a non-zero tile in a diagonal, take the two adjacent tiles to the diagonal and add them.
          *  Note : The minus one is because we want to take the sum of numbers pre-incrementing.
         */
 
-        TopLeft();
-        TopRight();
-        BotLeft();
-        BotRight();
+        // Top Left
+        if (touchedTile.TopLeft != null && touchedTile.TopMid != null && touchedTile.Left != null)
+        {
+            Diagonal(touchedTile.TopLeft.GetComponent<Tile>(), touchedTile.TopMid.GetComponent<Tile>(), touchedTile.Left.GetComponent<Tile>());
+        }
+        // Top Right
+        if (touchedTile.TopRight != null && touchedTile.TopMid != null && touchedTile.Right != null)
+        {
+            Diagonal(touchedTile.TopRight.GetComponent<Tile>(), touchedTile.TopMid.GetComponent<Tile>(), touchedTile.Right.GetComponent<Tile>());
+        }
+        // Bot Left
+        if (touchedTile.BottomLeft != null && touchedTile.BottomMid != null && touchedTile.Left != null)
+        {
+            Diagonal(touchedTile.BottomLeft.GetComponent<Tile>(), touchedTile.BottomMid.GetComponent<Tile>(), touchedTile.Left.GetComponent<Tile>());
+        }
+        // Bot Right
+        if (touchedTile.BottomRight != null && touchedTile.BottomMid != null && touchedTile.Right != null)
+        {
+            Diagonal(touchedTile.BottomRight.GetComponent<Tile>(), touchedTile.BottomMid.GetComponent<Tile>(), touchedTile.Right.GetComponent<Tile>());
+        }
 
         undo.AddUndo(undoTiles, undoScore, openedTiles);
-        
-        CheckForWin();
+
+        for (int i = 0; i < undoTiles.Count; i++)
+        {
+            CheckForWin(undoTiles[i].tile);
+        }
     }
 
     void OnTouchStay()
@@ -95,316 +130,61 @@ public class Button : MonoBehaviour
     {
     }
 
-    private void TopMid()
+    private void Adjacent(Tile tile)
     {
-        if (touchedTile.TopMid != null)
+        if (tile.Value.text != "0")
         {
-            touchedTM = touchedTile.TopMid.GetComponent<Tile>();
-            if (touchedTM.Value.text != "0")
-            {
-                undoTiles.Add(touchedTM);
-                undoScore += 10;
-                scoreScript.IncreaseScore(10);
-                StartCoroutine(touchedTM.RotateDiagonal());
-                touchedTM.Value.text = (Int32.Parse(touchedTM.Value.text) + 1).ToString();
-                touchedTM.CanTouch = false;
-                touchedTM.touchy = touchedTM.CanTouch;
+            undoTiles.Add(new TileScore(tile, 1));
+            scoreScript.IncreaseScore(10);
+            undoScore += 10;
+            StartCoroutine(tile.RotateDiagonal());
+            tile.Value.text = (Int32.Parse(tile.Value.text) + 1).ToString();
+            tile.CanTouch = false;
+            tile.touchy = tile.CanTouch;
 
-                if (Int32.Parse(touchedTM.Value.text) >= 10)
-                {
-                    touchedTM.UpdateTileImage();
-                }
-            }
-            else
+            if (Int32.Parse(tile.Value.text) >= 10)
             {
-                if (!touchedTM.CanTouch)
-                {
-                    openedTiles.Add(touchedTM);
-                }
-                touchedTM.CanTouch = true;
-                touchedTM.touchy = touchedTM.CanTouch;
-                touchedTM.StartCoroutine(touchedTM.ChangeTileColors());
+                tile.UpdateTileImage();
+            }
+        }
+        else
+        {
+            if (!tile.CanTouch)
+            {
+                openedTiles.Add(tile);
+            }
+            tile.CanTouch = true;
+            tile.touchy = tile.CanTouch;
+            tile.StartCoroutine(tile.ChangeTileColors());
+        }
+    }
+
+    private void Diagonal(Tile tile, Tile adjacent1, Tile adjacent2)
+    {
+        if (adjacent1.Value.text != "0" && adjacent2.Value.text != "0")
+        {
+            int tileScoreValue = Int32.Parse(adjacent1.Value.text) + Int32.Parse(adjacent2.Value.text) - 2;
+            undoTiles.Add(new TileScore(tile, tileScoreValue));
+            scoreScript.IncreaseScore(50);
+            undoScore += 50;
+            StartCoroutine(tile.RotateDiagonal());
+            tile.Value.text = (Int32.Parse(tile.Value.text) + Int32.Parse(adjacent1.Value.text) + Int32.Parse(adjacent2.Value.text) - 2).ToString();
+            tile.CanTouch = false;
+            tile.touchy = tile.CanTouch;
+
+            if (Int32.Parse(tile.Value.text) >= 10)
+            {
+                tile.UpdateTileImage();
             }
         }
     }
 
-    private void TopLeft()
+    private void CheckForWin(Tile tile)
     {
-        if (touchedTile.TopLeft != null)
+        if(tile.IsWinCondition && Int32.Parse(tile.Value.text) >= 10 && !tile.WinMarked)
         {
-            touchedTL = touchedTile.TopLeft.GetComponent<Tile>();
-
-            if (touchedTM.Value.text != "0" && touchedL.Value.text != "0")
-            {
-                undoTiles.Add(touchedTL);
-                undoScore += 50;
-                scoreScript.IncreaseScore(50);
-                StartCoroutine(touchedTL.RotateDiagonal());
-                touchedTL.Value.text = (Int32.Parse(touchedTL.Value.text) + Int32.Parse(touchedTM.Value.text) + Int32.Parse(touchedL.Value.text) - 2).ToString();
-                touchedTL.CanTouch = false;
-                touchedTL.touchy = touchedTL.CanTouch;
-
-                if (Int32.Parse(touchedTL.Value.text) >= 10)
-                {
-                    touchedTL.UpdateTileImage();
-                }
-            }
-        }
-    }
-
-    private void TopRight()
-    {
-        if (touchedTile.TopRight != null)
-        {
-            touchedTR = touchedTile.TopRight.GetComponent<Tile>();
-            if (touchedTM.Value.text != "0" && touchedR.Value.text != "0")
-            {
-                undoTiles.Add(touchedTR);
-                undoScore += 50;
-                scoreScript.IncreaseScore(50);
-                StartCoroutine(touchedTR.RotateDiagonal());
-                touchedTR.Value.text = (Int32.Parse(touchedTR.Value.text) + Int32.Parse(touchedTM.Value.text) + Int32.Parse(touchedR.Value.text) - 2).ToString();
-                touchedTR.CanTouch = false;
-                touchedTR.touchy = touchedTR.CanTouch;
-
-                if (Int32.Parse(touchedTR.Value.text) >= 10)
-                {
-                    touchedTR.UpdateTileImage();
-                }
-            }
-        }    
-    }
-
-    private void Left()
-    {
-        if (touchedTile.Left != null)
-        {
-            touchedL = touchedTile.Left.GetComponent<Tile>();
-            if (touchedL.Value.text != "0")
-            {
-                undoTiles.Add(touchedL);
-                scoreScript.IncreaseScore(10);
-                undoScore += 10;
-                StartCoroutine(touchedL.RotateDiagonal());
-                touchedL.Value.text = (Int32.Parse(touchedL.Value.text) + 1).ToString();
-                touchedL.CanTouch = false;
-                touchedL.touchy = touchedL.CanTouch;
-
-                if (Int32.Parse(touchedL.Value.text) >= 10)
-                {
-                    touchedL.UpdateTileImage();
-                }
-            }
-            else
-            {
-                if (!touchedL.CanTouch)
-                {
-                    openedTiles.Add(touchedL);
-                }
-                touchedL.CanTouch = true;
-                touchedL.touchy = touchedL.CanTouch;
-                touchedL.StartCoroutine(touchedL.ChangeTileColors());
-            }
-        }
-    }
-
-    private void Right()
-    {
-        if (touchedTile.Right != null)
-        {
-            touchedR = touchedTile.Right.GetComponent<Tile>();
-            if (touchedR.Value.text != "0")
-            {
-                undoTiles.Add(touchedR);
-                scoreScript.IncreaseScore(10);
-                undoScore += 10;
-                StartCoroutine(touchedR.RotateDiagonal());
-                touchedR.Value.text = (Int32.Parse(touchedR.Value.text) + 1).ToString();
-                touchedR.CanTouch = false;
-                touchedR.touchy = touchedR.CanTouch;
-
-                if (Int32.Parse(touchedR.Value.text) >= 10)
-                {
-                    touchedR.UpdateTileImage();
-                }
-            }
-            else
-            {
-                if (!touchedR.CanTouch)
-                {
-                    openedTiles.Add(touchedR);
-                }
-                touchedR.CanTouch = true;
-                touchedR.touchy = touchedR.CanTouch;
-                touchedR.StartCoroutine(touchedR.ChangeTileColors());
-            }
-        }
-    }
-
-    private void BotMid()
-    {
-        if (touchedTile.BottomMid != null)
-        {
-            touchedBM = touchedTile.BottomMid.GetComponent<Tile>();
-            if (touchedBM.Value.text != "0")
-            {
-                undoTiles.Add(touchedBM);
-                undoScore += 10;
-                scoreScript.IncreaseScore(10);
-                StartCoroutine(touchedBM.RotateDiagonal());
-                touchedBM.Value.text = (Int32.Parse(touchedBM.Value.text) + 1).ToString();
-                touchedBM.CanTouch = false;
-                touchedBM.touchy = touchedBM.CanTouch;
-
-                if (Int32.Parse(touchedBM.Value.text) >= 10)
-                {
-                    touchedBM.UpdateTileImage();
-                }
-            }
-            else
-            {
-                if (!touchedBM.CanTouch)
-                {
-                    openedTiles.Add(touchedBM);
-                }
-                touchedBM.CanTouch = true;
-                touchedBM.touchy = touchedBM.CanTouch;
-                touchedBM.StartCoroutine(touchedBM.ChangeTileColors());
-            }
-        }
-    }
-
-    private void BotLeft()
-    {
-        if (touchedTile.BottomLeft != null)
-        {
-            touchedBL = touchedTile.BottomLeft.GetComponent<Tile>();
-            if (touchedBM.Value.text != "0" && touchedL.Value.text != "0")
-            {
-                undoTiles.Add(touchedBL);
-                undoScore += 50;
-                scoreScript.IncreaseScore(50);
-                StartCoroutine(touchedBL.RotateDiagonal());
-                touchedBL.Value.text = (Int32.Parse(touchedBL.Value.text) + Int32.Parse(touchedBM.Value.text) + Int32.Parse(touchedL.Value.text) - 2).ToString();
-                touchedBL.CanTouch = false;
-                touchedBL.touchy = touchedBL.CanTouch;
-
-                if (Int32.Parse(touchedBL.Value.text) >= 10)
-                {
-                    touchedBL.UpdateTileImage();
-                }
-            }
-        }
-    }
-
-    private void BotRight()
-    {
-        if (touchedTile.BottomRight != null)
-        {
-            touchedBR = touchedTile.BottomRight.GetComponent<Tile>();
-            if (touchedBM.Value.text != "0" && touchedR.Value.text != "0")
-            {
-                undoTiles.Add(touchedBR);
-                scoreScript.IncreaseScore(50);
-                undoScore += 50;
-                StartCoroutine(touchedBR.RotateDiagonal());
-                touchedBR.Value.text = (Int32.Parse(touchedBR.Value.text) + Int32.Parse(touchedBM.Value.text) + Int32.Parse(touchedR.Value.text) - 2).ToString();
-                touchedBR.CanTouch = false;
-                touchedBR.touchy = touchedBR.CanTouch;
-
-                if (Int32.Parse(touchedBR.Value.text) >= 10)
-                {
-                    touchedBR.UpdateTileImage();
-                }
-            }
-        }
-    }
-
-    private void CheckForWin()
-    {
-        if (touchedTile != null && touchedTile.IsWinCondition)
-        {
-            if (Int32.Parse(touchedTile.Value.text) >= 10 && !touchedTile.WinMarked)
-            {
-                touchedTile.WinMarked = true;
-                tileCondition.CheckForWin();
-            }
-        }
-
-        if (touchedBR != null && touchedBR.IsWinCondition)
-        {
-            if (Int32.Parse(touchedBR.Value.text) >= 10 && !touchedBR.WinMarked)
-            {
-                touchedBR.WinMarked = true;
-                touchedBR.touchy = touchedBR.CanTouch;
-                tileCondition.CheckForWin();
-            }
-        }
-
-        if (touchedBL != null && touchedBL.IsWinCondition)
-        {
-            if (Int32.Parse(touchedBL.Value.text) >= 10 && !touchedBL.WinMarked)
-            {
-                touchedBL.WinMarked = true;
-                touchedBL.touchy = touchedBL.CanTouch;
-                tileCondition.CheckForWin();
-            }
-        }
-
-        if (touchedTR != null && touchedTR.IsWinCondition)
-        {
-            if (Int32.Parse(touchedTR.Value.text) >= 10 && !touchedTR.WinMarked)
-            {
-                touchedTR.WinMarked = true;
-                touchedTR.touchy = touchedTR.CanTouch;
-                tileCondition.CheckForWin();
-            }
-        }
-
-        if (touchedTL != null && touchedTL.IsWinCondition)
-        {
-            if (Int32.Parse(touchedTL.Value.text) >= 10 && !touchedTL.WinMarked)
-            {
-                touchedTL.WinMarked = true;
-                touchedTL.touchy = touchedTL.CanTouch;
-                tileCondition.CheckForWin();
-            }
-        }
-
-        if (touchedBM != null && touchedBM.IsWinCondition)
-        {
-            if (Int32.Parse(touchedBM.Value.text) >= 10 && !touchedBM.WinMarked)
-            {
-                touchedBM.WinMarked = true;
-                tileCondition.CheckForWin();
-            }
-        }
-
-        if (touchedR != null && touchedR.IsWinCondition)
-        {
-            if (Int32.Parse(touchedR.Value.text) >= 10 && !touchedR.WinMarked)
-            {
-                touchedR.WinMarked = true;
-                tileCondition.CheckForWin();
-            }
-        }
-
-        if (touchedTM != null && touchedTM.IsWinCondition)
-        {
-            if (Int32.Parse(touchedTM.Value.text) >= 10 && !touchedTM.WinMarked)
-            {
-                touchedTM.WinMarked = true;
-                tileCondition.CheckForWin();
-            }
-        }
-
-        if (touchedL != null && touchedL.IsWinCondition)
-        {
-            if (Int32.Parse(touchedL.Value.text) >= 10 && !touchedL.WinMarked)
-            {
-                touchedL.WinMarked = true;
-                tileCondition.CheckForWin();
-            }
+            tile.WinMarked = true;
+            tileCondition.CheckForWin();
         }
     }
 }

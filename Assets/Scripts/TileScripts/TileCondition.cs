@@ -59,6 +59,11 @@ public class TileCondition : MonoBehaviour {
         }
     }
 
+    public static void DecreaseCompletedTiles()
+    {
+        completedTiles--;
+    }
+
     public void CheckForWin()
     {
         completedTiles++;

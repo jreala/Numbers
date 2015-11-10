@@ -18,6 +18,8 @@ public class Tile : MonoBehaviour
     public Sprite star;
     public Sprite win_tile;
     public Sprite star_win_tile;
+    public Sprite defaultTile;
+    
     public bool touchy;
     public bool CanTouch { get; set; }
     public bool IsWinCondition = false;
@@ -29,6 +31,7 @@ public class Tile : MonoBehaviour
 	// Use this for initialization
 	void Start () 
     {
+        defaultTile = Resources.Load<Sprite>("Images/Tile");
         CanTouch = true;
         touchy = CanTouch;
         sr = this.gameObject.GetComponent<SpriteRenderer>();
@@ -138,6 +141,10 @@ public class Tile : MonoBehaviour
             if (IsWinCondition)
             {
                 sr.sprite = win_tile;
+            }
+            else
+            {
+                sr.sprite = defaultTile;
             }
         }
     }
