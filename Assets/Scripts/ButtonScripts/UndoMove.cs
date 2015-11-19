@@ -50,9 +50,9 @@ public class UndoMove : MonoBehaviour {
                         EnableTileTouch(tile);
                         tile.tile.ReEnableColorCoroutine();   
                     }
+                    UndoTileWin(tile.tile);
                     LowerTileScore(tile);
                     HideTileScore(tile);
-                    UndoTileWin(tile.tile);
                 }
             }
             UndoScore();
@@ -99,11 +99,11 @@ public class UndoMove : MonoBehaviour {
 
     private void UndoTileWin(Tile tile)
     {
-        if(tile.IsWinCondition)
+        if(tile.IsWinCondition && Int32.Parse(tile.Value.text) >= 10)
         {
             TileCondition.DecreaseCompletedTiles();
+            tile.WinMarked = false;
         }
-        tile.WinMarked = false;
     }
 
     private void ReformatBoard()

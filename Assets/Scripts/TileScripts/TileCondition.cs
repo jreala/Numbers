@@ -80,6 +80,7 @@ public class TileCondition : MonoBehaviour {
 
     private void HowManyWinTiles()
     {
+        //numWinTiles = 0;
         foreach (Tile tile in tiles)
         {
             if(tile.IsWinCondition)
